@@ -23,3 +23,8 @@
 .task-form button:hover {
   background-color: #0056b3;
 }
+
+.task-item {
+  padding: 10px;
+  border-bottom: 1px solid #eee;
+}
