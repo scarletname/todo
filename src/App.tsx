@@ -9,15 +9,16 @@ export interface Task {
 }
 
 const App: React.FC = () => {
-  const [tasks, setTasks] = useState<Task[]>([
-    { id: '1', title: 'Пример задачи 1' },
-    { id: '2', title: 'Пример задачи 2' },
-  ]);
+  const [tasks, setTasks] = useState<Task[]>([]);
+
+  const addTask = (task: Task) => {
+    setTasks([...tasks, task]);
+  };
 
   return (
     <div className="app">
       <h1>Система управления задачами</h1>
-      <TaskForm />
+      <TaskForm addTask={addTask} />
       <div>
         {tasks.map((task) => (
           <TaskItem key={task.id} task={task} />
@@ -28,4 +29,3 @@ const App: React.FC = () => {
 };
 
 export default App;
-
