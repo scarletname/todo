@@ -23,6 +23,7 @@ const Filters: React.FC<FiltersProps> = ({ filters, setFilters, handleSearch }) 
             onChange={(e) =>
               setFilters({ ...filters, status: e.target.value as FiltersType['status'] })
             }
+            className={filters.status !== 'all' ? 'active' : ''}
           >
             <option value="all">Все</option>
             <option value="completed">Выполненные</option>
@@ -36,6 +37,7 @@ const Filters: React.FC<FiltersProps> = ({ filters, setFilters, handleSearch }) 
             onChange={(e) =>
               setFilters({ ...filters, priority: e.target.value as FiltersType['priority'] })
             }
+            className={filters.priority !== 'all' ? 'active' : ''}
           >
             <option value="all">Все</option>
             <option value="low">Низкий</option>
@@ -50,6 +52,7 @@ const Filters: React.FC<FiltersProps> = ({ filters, setFilters, handleSearch }) 
             onChange={(e) =>
               setFilters({ ...filters, date: e.target.value as FiltersType['date'] })
             }
+            className={filters.date !== 'all' ? 'active' : ''}
           >
             <option value="all">Все</option>
             <option value="today">Сегодня</option>

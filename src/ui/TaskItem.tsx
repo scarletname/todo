@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Task } from '../App';
+import { getPriorityDisplayName } from '../utils/priorityUtils';
 
 interface TaskItemProps {
   task: Task;
@@ -9,6 +10,7 @@ interface TaskItemProps {
 }
 
 const TaskItem: React.FC<TaskItemProps> = ({ task, deleteTask, updateTask, isValidDueDate }) => {
+  // Состояния для редактирования задачи
   const [isEditing, setIsEditing] = useState(false);
   const [editTitle, setEditTitle] = useState(task.title);
   const [editPriority, setEditPriority] = useState(task.priority);
@@ -16,6 +18,10 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, deleteTask, updateTask, isVal
   const [editDueDate, setEditDueDate] = useState(task.dueDate || '');
   const [error, setError] = useState('');
 
+  // Проверка, просрочена ли задача
+  const isOverdue = task.dueDate && !task.completed && new Date(task.dueDate) < new Date();
+
+  // Сохранение изменений после редактирования
   const handleSave = () => {
     if (editTitle.length < 3) {
       setError('Название должно быть минимум 3 символа');
@@ -28,7 +34,7 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, deleteTask, updateTask, isVal
     updateTask(task.id, {
       title: editTitle,
       priority: editPriority,
-      tags: editTags.split(',').map((tag: string) => tag.trim()).filter(Boolean),
+      tags: editTags.split(',').map((tag) => tag.trim()).filter(Boolean),
       dueDate: editDueDate || null,
     });
     setIsEditing(false);
@@ -36,39 +42,23 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, deleteTask, updateTask, isVal
   };
 
   return (
-    <div className="task-item">
+    <div className={`task-item ${isOverdue ? 'overdue' : ''}`}>
       {isEditing ? (
-        <div>
-          <input
-            type="text"
-            value={editTitle}
-            onChange={(e) => setEditTitle(e.target.value)}
-          />
-          <div className="form-row">
-            <select
-              value={editPriority}
-              onChange={(e) => setEditPriority(e.target.value as Task['priority'])}
-            >
-              <option value="low">Низкий</option>
-              <option value="medium">Средний</option>
-              <option value="high">Высокий</option>
-            </select>
-            <input
-              type="text"
-              value={editTags}
-              onChange={(e) => setEditTags(e.target.value)}
-              placeholder="Теги (через запятую)"
-            />
-            <input
-              type="date"
-              value={editDueDate}
-              onChange={(e) => setEditDueDate(e.target.value)}
-            />
-          </div>
-          {error && <p className="error">{error}</p>}
+        // Режим редактирования: все поля в одну строку
+        <div className="edit-row">
+          <input type="text" value={editTitle} onChange={(e) => setEditTitle(e.target.value)} />
+          <select value={editPriority} onChange={(e) => setEditPriority(e.target.value as Task['priority'])}>
+            <option value="low">Низкий</option>
+            <option value="medium">Средний</option>
+            <option value="high">Высокий</option>
+          </select>
+          <input type="text" value={editTags} onChange={(e) => setEditTags(e.target.value)} placeholder="Теги (через запятую)" />
+          <input type="date" value={editDueDate} onChange={(e) => setEditDueDate(e.target.value)} />
           <button onClick={handleSave}>Сохранить</button>
+          {error && <p className="error">{error}</p>}
         </div>
       ) : (
+        // Режим просмотра: отображение информации о задаче
         <div className="task-content">
           <span
             onClick={() => updateTask(task.id, { completed: !task.completed })}
@@ -78,12 +68,13 @@ const TaskItem: React.FC<TaskItemProps> = ({ task, deleteTask, updateTask, isVal
           </span>
           <p>
             Статус: {task.completed ? 'Выполнено' : 'Не выполнено'} | 
-            Приоритет: {task.priority} | 
+            Приоритет: {getPriorityDisplayName(task.priority)} | 
             Теги: {task.tags.join(', ') || 'нет'} | 
             Срок: {task.dueDate || 'нет'}
           </p>
         </div>
       )}
+      {/* Кнопки для редактирования и удаления */}
       <div>
         <button onClick={() => setIsEditing(!isEditing)}>
           {isEditing ? 'Отмена' : 'Редактировать'}

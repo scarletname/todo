@@ -7,11 +7,11 @@ interface TaskFormProps {
 }
 
 const TaskForm: React.FC<TaskFormProps> = ({ addTask, isValidDueDate }) => {
-  const [title, setTitle] = useState('');
+  const [title, setTitle] = useState<string>('');
   const [priority, setPriority] = useState<Task['priority']>('medium');
-  const [tags, setTags] = useState('');
-  const [dueDate, setDueDate] = useState('');
-  const [error, setError] = useState('');
+  const [tags, setTags] = useState<string>('');
+  const [dueDate, setDueDate] = useState<string>('');
+  const [error, setError] = useState<string>('');
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -24,11 +24,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ addTask, isValidDueDate }) => {
       return;
     }
     addTask({
-      id: Math.random().toString(),
+      id: crypto.randomUUID(),
       title,
       completed: false,
       priority,
-      tags: tags.split(',').map((tag: string) => tag.trim()).filter(Boolean),
+      tags: tags.split(',').map((tag) => tag.trim()).filter(Boolean),
       dueDate: dueDate || null,
     });
     setTitle('');
@@ -36,6 +36,11 @@ const TaskForm: React.FC<TaskFormProps> = ({ addTask, isValidDueDate }) => {
     setTags('');
     setDueDate('');
     setError('');
+  };
+
+  const handlePriorityChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const value = e.target.value as Task['priority'];
+    setPriority(value);
   };
 
   return (
@@ -48,17 +53,19 @@ const TaskForm: React.FC<TaskFormProps> = ({ addTask, isValidDueDate }) => {
       />
       {error && <p className="error">{error}</p>}
       <div className="form-row">
-        <select value={priority} onChange={(e) => setPriority(e.target.value as Task['priority'])}>
-          <option value="low">Низкий</option>
-          <option value="medium">Средний</option>
-          <option value="high">Высокий</option>
-        </select>
-        <input
-          type="text"
-          value={tags}
-          onChange={(e) => setTags(e.target.value)}
-          placeholder="Теги (через запятую)"
-        />
+        <div className="priority-tags-row">
+          <select value={priority} onChange={handlePriorityChange}>
+            <option value="low">Низкий</option>
+            <option value="medium">Средний</option>
+            <option value="high">Высокий</option>
+          </select>
+          <input
+            type="text"
+            value={tags}
+            onChange={(e) => setTags(e.target.value)}
+            placeholder="Теги (через запятую)"
+          />
+        </div>
         <input
           type="date"
           value={dueDate}
