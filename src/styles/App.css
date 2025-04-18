@@ -78,3 +78,22 @@
   margin: 5px;
   font-size: 14px;
 }
+
+.task-content {
+  flex: 1;
+}
+
+.task-item input {
+  padding: 8px;
+  margin: 5px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
+
+.task-item button:nth-child(1) {
+  background-color: #007bff;
+}
+
+.task-item button:nth-child(1):hover {
+  background-color: #0056b3;
+}
